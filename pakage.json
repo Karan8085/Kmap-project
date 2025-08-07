@@ -1,0 +1,17 @@
+{
+  "name": "kmap-solver-gated",
+  "version": "1.0.0",
+  "description": "A gated K-Map solver application with a manual user verification system.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "author": "Karan Kshirsagar",
+  "license": "ISC",
+  "dependencies": {
+    "@vercel/kv": "^0.2.4",
+    "connect-redis": "^7.1.0",
+    "express": "^4.18.2",
+    "express-session": "^1.17.3"
+  }
+}
