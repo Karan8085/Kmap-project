@@ -2,27 +2,29 @@
 const express = require('express');
 const session = require('express-session');
 const path = require('path');
-
-// Create an Express application
-const app = express();
-const PORT = 3000; // The port your website will run on
+const { createClient } = require("@vercel/kv");
+const RedisStore = require("connect-redis").default;
 
 // =================================================================
 // == AREA TO ADD NEW USERS ==
 // This is where you will hardcode the users you have verified.
-// After a user pays and you verify their details in the Google Sheet,
-// add their email and chosen password here.
 const users = [
     { email: 'user1@example.com', password: 'password123' },
-    { email: 'karan@kshirsagar.com', password: 'pro-dev-rocks' },
-  { email: 'karan01ksh@gmail.com', password: 'Password321' },
-  
-    // Add more verified users here like this:
-    // { email: 'newstudent@email.com', password: 'securepassword' },
+    { email: 'karan@kshirsagar.com', password: 'pro-dev-rocks' }
+    // Add more verified users here
 ];
 // =================================================================
 
-// -- Middleware Setup --
+// Initialize the Redis Client using environment variables from Vercel
+const redisClient = createClient({
+  url: process.env.KV_URL,
+  token: process.env.KV_REST_API_TOKEN,
+});
+
+// Create an Express application
+const app = express();
+
+// --- Middleware Setup ---
 
 // Serve static files (CSS, client-side JS, images) from the 'public' directory
 app.use(express.static(path.join(__dirname, 'public')));
@@ -30,70 +32,69 @@ app.use(express.static(path.join(__dirname, 'public')));
 // Allow the server to understand POST request bodies (like from a login form)
 app.use(express.urlencoded({ extended: true }));
 
-// Set up the session middleware
+// Configure the session to use our RedisStore, saving data in Vercel KV
 app.use(session({
-    secret: 'you-should-not-know-this', // Change this to a random string
+    store: new RedisStore({ client: redisClient }), // Use Redis as the session store
+    secret: 'your-super-secret-key-change-this-now', // IMPORTANT: Change this to a long random string
     resave: false,
-    saveUninitialized: true,
-    cookie: { secure: false } // Set to true if you use HTTPS
+    saveUninitialized: false, // Recommended setting for Redis
+    cookie: { 
+        secure: process.env.NODE_ENV === 'production', // Ensure cookies are only sent over HTTPS in production
+        httpOnly: true, // Prevents client-side JavaScript from accessing the cookie
+        maxAge: 1000 * 60 * 60 * 24 // Cookie will expire in 1 day (in milliseconds)
+    }
 }));
 
-// -- Authentication Middleware --
-// This function checks if a user is logged in before allowing access to a protected page.
+
+// --- Authentication Middleware to protect routes ---
 const checkAuth = (req, res, next) => {
+    // Check if the session object has our 'isAuthenticated' flag
     if (req.session.isAuthenticated) {
-        // If the user's session is authenticated, let them proceed.
-        next();
+        next(); // If yes, proceed to the requested page (e.g., /kmap)
     } else {
-        // If not, redirect them back to the login page.
-        res.redirect('/');
+        res.redirect('/'); // If no, send them back to the login page
     }
 };
 
-// -- Routes (The URL endpoints for our app) --
+// --- Routes (URL Endpoints) ---
 
-// 1. Root Route ('/'): Serves the login page.
+// Route for the root URL ('/'), serves the login page
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'login.html'));
 });
 
-// 2. K-Map Route ('/kmap'): Serves the K-Map tool. It's protected by our checkAuth middleware.
+// Route for '/kmap', protected by our checkAuth middleware
 app.get('/kmap', checkAuth, (req, res) => {
     res.sendFile(path.join(__dirname, 'kmap.html'));
 });
 
-// 3. Login Logic Route ('/login'): Handles the form submission from the login page.
+// Route to handle the login form submission
 app.post('/login', (req, res) => {
     const { email, password } = req.body;
-    
-    // Find a user in our hardcoded 'users' array
     const user = users.find(u => u.email === email && u.password === password);
 
     if (user) {
-        // If user is found and password matches, set the session variable
+        // If user is found, set a flag on the session object
         req.session.isAuthenticated = true;
         // Redirect them to the protected K-Map page
         res.redirect('/kmap');
     } else {
-        // If user is not found, redirect them back to the login page with an error message
-        // For simplicity, we just redirect. A more advanced version could show an error.
+        // If user is not found, redirect them back to the login page
         res.redirect('/');
     }
 });
 
-// 4. Logout Route ('/logout')
+// Route to handle logout
 app.get('/logout', (req, res) => {
     req.session.destroy(err => {
         if(err) {
+            // If there's an error destroying the session, redirect anyway
             return res.redirect('/kmap');
         }
-        res.clearCookie('connect.sid');
+        res.clearCookie('connect.sid'); // Clear the session cookie
         res.redirect('/');
     });
 });
 
-
-// Start the server and listen for connections
-app.listen(PORT, () => {
-    console.log(`🚀 Server is running at http://localhost:${PORT}`);
-});
+// Export the configured app for Vercel to use as a serverless function
+module.exports = app;
