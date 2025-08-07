@@ -29,7 +29,21 @@ const app = express();
 // --- Middleware Setup ---
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.urlencoded({ extended: true }));
+// Add this line to trust Vercel's proxy
+app.set('trust proxy', 1); 
 
+// This section should already be in your code
+app.use(session({
+    store: new RedisStore({ client: redisClient }),
+    secret: 'your-super-secret-key-change-this-now',
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+        secure: process.env.NODE_ENV === 'production',
+        httpOnly: true,
+        maxAge: 1000 * 60 * 60 * 24
+    }
+}));
 // Configure the session to use our RedisStore (No changes needed here)
 app.use(session({
     store: new RedisStore({ client: redisClient }),
