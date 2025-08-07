@@ -63,24 +63,36 @@ app.get('/kmap', checkAuth, (req, res) => {
 
 app.post('/login', (req, res) => {
     const { email, password } = req.body;
-    // --- START DEBUG LOGS ---
+
+    // 1. Log the incoming login attempt
     console.log("--- LOGIN ATTEMPT ---");
     console.log("Received Email:", email);
     console.log("Received Password:", password);
 
     const user = users.find(u => u.email === email && u.password === password);
-
+    
     if (user) {
+        // 2. If user is found, log success
         console.log("SUCCESS: User found in database ->", user.email);
-    } else {
-        console.log("FAILURE: User not found or password does not match.");
-    }
-    console.log("----------------------");
-    // --- END DEBUG LOGS ---
-    if (user) {
         req.session.isAuthenticated = true;
-        res.redirect('/kmap');
+
+        // 3. Save the session to Redis before redirecting
+        req.session.save(err => {
+            if (err) {
+                console.error('Session save error:', err);
+                return res.redirect('/');
+            }
+            
+            // 4. After saving, log success and redirect
+            console.log("Session saved successfully. Redirecting to /kmap.");
+            console.log("----------------------");
+            res.redirect('/kmap');
+        });
+
     } else {
+        // 5. If user is not found, log failure and redirect
+        console.log("FAILURE: User not found or password does not match.");
+        console.log("----------------------");
         res.redirect('/');
     }
 });
