@@ -1,0 +1,277 @@
+/* General Body and Container Styling */
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    background-color: #f0f2f5;
+    color: #333;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    min-height: 100vh;
+    box-sizing: border-box;
+}
+
+.container {
+    background-color: #fff;
+    padding: 25px 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    width: 95%;
+    max-width: 800px;
+    text-align: center;
+}
+
+h1 {
+    color: #0d6efd;
+    margin-bottom: 5px;
+}
+
+h2 {
+    margin-top: 0;
+    font-size: 1.1rem;
+    text-align: left;
+}
+
+p {
+    margin-bottom: 20px;
+    color: #555;
+    line-height: 1.6;
+}
+
+p.intro-text {
+    font-size: 0.95rem;
+    max-width: 600px;
+    margin: 0 auto 25px auto;
+}
+
+/* Controls */
+.controls {
+    margin-bottom: 25px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+select, button {
+    padding: 10px 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+button {
+    background-color: #0d6efd;
+    color: white;
+    border: none;
+    transition: background-color 0.2s;
+}
+
+button:hover {
+    background-color: #0b5ed7;
+}
+
+#reset-button { background-color: #6c757d; }
+#reset-button:hover { background-color: #5a6268; }
+
+/* K-Map Responsive Layout */
+#kmap-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 20px auto;
+    position: relative;
+    padding: 35px 0 0 35px; /* Space for labels */
+    max-width: 500px;
+}
+
+.kmap-grid {
+    display: grid;
+    width: 100%;
+    border: 1px solid #999;
+}
+
+.kmap-cell {
+    aspect-ratio: 1 / 1; /* Keep cells square */
+    border: 1px solid #ccc;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: clamp(1rem, 5vw, 1.5rem); /* Responsive font size */
+    font-weight: bold;
+    cursor: pointer;
+    user-select: none;
+    transition: background-color 0.2s;
+    position: relative; /* Crucial for positioning the borders */
+}
+
+.kmap-cell:hover {
+    background-color: #e9ecef;
+}
+
+/* K-Map Labels */
+.labels {
+    font-size: clamp(0.7rem, 2.5vw, 0.9rem); /* Responsive font size */
+    font-weight: bold;
+    color: #333;
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.row-bit-labels {
+    flex-direction: column;
+    top: 35px;
+    left: 0;
+    width: 30px;
+    height: calc(100% - 35px);
+}
+
+.col-bit-labels {
+    flex-direction: row;
+    top: 0;
+    left: 35px;
+    height: 30px;
+    width: calc(100% - 35px);
+}
+
+.col-bit-labels div, .row-bit-labels div {
+    flex: 1; /* Distribute space evenly to align with grid cells */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.var-label-side {
+    top: 50%;
+    left: 5px;
+    transform: translateY(-50%);
+}
+
+.var-label-top {
+    top: 5px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+/* Solution and Explanation */
+#solution-container, #explanation-container {
+    background-color: #f8f9fa;
+    border-left: 5px solid #0d6efd;
+    padding: 15px;
+    text-align: left;
+    min-height: 50px;
+    border-radius: 5px;
+    margin-top: 20px;
+}
+
+#solution {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: clamp(1rem, 4vw, 1.25rem); /* Responsive font size */
+    font-weight: bold;
+    color: #d63384;
+    margin: 0;
+    word-break: break-all;
+}
+
+#explanation-container p {
+    font-size: 0.9rem;
+    margin: 10px 0;
+    padding-bottom: 10px;
+    border-bottom: 1px dashed #ddd;
+}
+#explanation-container p:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+/* Group Border Styling */
+.border-container {
+    position: absolute;
+    display: flex;
+    pointer-events: none; /* Make sure they don't interfere with clicks */
+}
+.border-top { top: -2px; left: -2px; right: -2px; height: 4px; flex-direction: row; }
+.border-bottom { bottom: -2px; left: -2px; right: -2px; height: 4px; flex-direction: row; }
+.border-left { left: -2px; top: -2px; bottom: -2px; width: 4px; flex-direction: column; }
+.border-right { right: -2px; top: -2px; bottom: -2px; width: 4px; flex-direction: column; }
+
+.border-segment {
+    flex: 1;
+}
+
+/* NEW: Group Dot Styling */
+.dot-container {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    display: flex;
+    flex-wrap: wrap;
+    pointer-events: none;
+}
+.group-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin: 1px;
+    border: 1px solid rgba(0,0,0,0.2);
+}
+
+/* Color definitions for borders and dots */
+.group-color-0 { background-color: #ffc107; } /* Yellow/Orange */
+.group-color-1 { background-color: #28a745; } /* Green */
+.group-color-2 { background-color: #dc3545; } /* Red */
+.group-color-3 { background-color: #6f42c1; } /* Purple */
+.group-color-4 { background-color: #007bff; } /* Blue */
+.group-color-5 { background-color: #fd7e14; } /* Orange */
+.group-color-6 { background-color: #17a2b8; } /* Teal */
+.group-color-7 { background-color: #e83e8c; } /* Pink */
+
+
+/* Footer */
+footer {
+    text-align: center;
+    margin-top: 30px;
+    color: #888;
+    font-size: 0.9rem;
+}
+
+footer p {
+    margin-bottom: 10px;
+}
+
+.social-links a {
+    color: #0d6efd;
+    text-decoration: none;
+    margin: 0 5px;
+    font-weight: bold;
+}
+
+.social-links a:hover {
+    text-decoration: underline;
+}
+
+
+/* Media Query for Mobile Devices */
+@media (max-width: 600px) {
+    body {
+        padding: 10px;
+    }
+    .container {
+        padding: 15px;
+    }
+    .controls {
+        flex-direction: column;
+    }
+    h1 {
+        font-size: 1.8rem;
+    }
+    .group-dot {
+      width: 6px;
+      height: 6px;
+    }
+}
