@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>K-Map Solver</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+    <div class="container">
+        <h1>Karnaugh Map (K-Map) Solver</h1>
+        <p>A tool to simplify boolean expressions up to 4 variables.</p>
+        <p class="intro-text">A Karnaugh map (K-map) is a graphical method used to simplify Boolean algebra expressions. It reduces the need for extensive calculations by allowing users to identify and eliminate redundant terms through visual grouping.</p>
+        
+        <div class="controls">
+            <label for="variable-select">Number of Variables:</label>
+            <select id="variable-select">
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4" selected>4</option>
+            </select>
+            <button id="solve-button">Solve</button>
+            <button id="reset-button">Reset</button>
+        </div>
+        
+        <div id="kmap-wrapper">
+            </div>
+        
+        <div id="solution-container">
+            <h2>Simplified Expression (SOP):</h2>
+            <p id="solution"></p>
+        </div>
+
+        <div id="explanation-container">
+            </div>
+    </div>
+
+    <footer>
+       <a href="/logout" style="display:block; margin-bottom:15px; color:red; font-weight:bold;">Logout</a>
+    
+        <p>Created by Karan Kshirsagar</p>
+        <div class="social-links">
+            <a href="https://www.github.com/Karan8085/" target="_blank">GitHub</a> &bull;
+            <a href="https://www.linkedin.com/in/karan-kshirsagar-541a5622a/" target="_blank">LinkedIn</a> &bull;
+            <a href="https://www.instagram.com/karan.heic/" target="_blank">Instagram</a>
+        </div>
+    </footer>
+
+    <script src="/js/script.js"></script>
+</body>
+</html>
