@@ -46,9 +46,21 @@ app.use(session({
 
 // --- Authentication Middleware ---
 const checkAuth = (req, res, next) => {
+    // --- NEW DEBUG LOGS for checkAuth ---
+    console.log("--- CHECKING AUTH for requested page ---");
+    // This logs the session ID cookie sent by the browser
+    console.log("Cookie Header from Browser:", req.headers.cookie);
+    // This logs the session data found in Redis for that cookie ID
+    console.log("Session data found in Redis:", req.session);
+
     if (req.session.isAuthenticated) {
+        console.log("Result: Auth check PASSED. Allowing access.");
+        console.log("------------------------------------");
         return next();
     }
+
+    console.log("Result: Auth check FAILED. Redirecting to login.");
+    console.log("------------------------------------");
     res.redirect('/');
 };
 
