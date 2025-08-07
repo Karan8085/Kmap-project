@@ -1,0 +1,7 @@
+# Ignore the folder containing all installed node packages.
+# This folder can be huge and is always re-created by running 'npm install'.
+node_modules/
+
+# Ignore the local environment file.
+# This file contains secret keys and should never be uploaded to GitHub.
+.env.local
