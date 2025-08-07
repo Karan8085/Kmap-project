@@ -2,7 +2,7 @@
 const express = require('express');
 const session = require('express-session');
 const path = require('path');
-const { Redis } = require("@upstash/redis"); // MODIFIED: Import the Upstash Redis client
+const { createClient } = require("redis"); // MODIFIED: Import the official 'redis' client
 const RedisStore = require("connect-redis").default;
 
 // =================================================================
@@ -13,10 +13,15 @@ const users = [
 ];
 // =================================================================
 
-// MODIFIED: Initialize the Redis Client using the custom REDIS_URL
-const redisClient = new Redis({
-  url: process.env.REDIS_URL,
+// MODIFIED: Initialize the official Redis Client
+const redisClient = createClient({
+  url: process.env.REDIS_URL // The 'redis' client correctly handles redis:// URLs
 });
+
+// It's good practice to listen for errors and connect
+redisClient.on('error', (err) => console.log('Redis Client Error', err));
+redisClient.connect().catch(console.error);
+
 
 // Create an Express application
 const app = express();
@@ -25,7 +30,7 @@ const app = express();
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.urlencoded({ extended: true }));
 
-// Configure the session to use our RedisStore
+// Configure the session to use our RedisStore (No changes needed here)
 app.use(session({
     store: new RedisStore({ client: redisClient }),
     secret: 'your-super-secret-key-change-this-now',
